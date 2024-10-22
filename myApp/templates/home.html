@@ -1,0 +1,757 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<head>
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
+    <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <script src="https://kit.fontawesome.com/7febf94e83.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<div id="buffer" class="buffer buffer-hide"></div>
+<div id="profile-buffer" class="profile-buffer profile-buffer-hide"></div>
+<header id="header" class="header">
+    <a style="display: flex; flex-direction: row; text-decoration: none; align-items: center; margin-left: -1vw;" href="{% url 'home' %}?uid={{form.id}}" style="display: block; cursor: pointer;">
+        <input id="myId" type="hidden" value="{{form.id}}"/>
+        <div class="logo-container-home">
+            <svg class="logoHome" width="149" height="119" viewBox="0 0 149 119" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M70 57.5L10.75 104.698L10.75 10.3016L70 57.5Z" fill="#DD9F9F"/>
+            <path d="M11 9L148.339 67.4259L101.503 80.9344L11 9Z" fill="#CB4C45"/>
+            <path d="M11.5 106L71 58.5L100 81.5L11.5 106Z" fill="#EB7A7A"/>
+            </svg>
+        </div>
+        <div onclick="searchRecentPost('test1', 'test2')" id="app-title" class="whiteTitleHome">
+            <p>TicketZen</p>
+        </div>
+    </a>
+    <!-- <nav>
+        <ul>
+            <li><a>Home</a></li>
+            <li><a>Tickets</a></li>
+            <li><a>Favorites</a></li>
+        </ul>
+    </nav> -->
+    <div id="greeting" class="greeting">
+        <p>Hello {{form.firstName}}</p>
+    </div>
+    <div class="header-search">
+        <input onkeyup="searchSaved(document.getElementById('searchbarRecent').value, '{{form.id}}')" id="searchbarRecent" type="text" placeholder="Search Saved Tickets">
+        <!-- <button></button> -->
+    </div>
+    <div id="searchMySavedTickets" class="header-search-results-container">
+    </div>
+    <div class="profile">
+        <div style="z-index: 999;" id="profile-container" class="profile-container">
+            <div class="profile-img">
+                <i style="color: white;" class="fa-regular fa-user fa-lg"></i>
+            </div>
+        </div>
+        <div style="z-index: -1;" id="profile-options" class="profile-options-hide">
+            <ul class="profile-list">
+                <li><p>Profile</p> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+                    <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                  </svg></li>
+                <li><p>Settings</p> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                    <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+                  </svg></li>
+                <li><a href="{% url 'index' %}"><p>Logout</p></a> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M6 8a.5.5 0 0 0 .5.5h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L12.293 7.5H6.5A.5.5 0 0 0 6 8m-2.5 7a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5"/>
+                  </svg></li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- <div class="logout-register">
+        <div id="logout" class="logout login-register-active">
+            <a style="text-decoration: none; color: white;" href="{% url 'login' %}"><p>Logout</p></a>
+        </div>
+    </div> -->
+</header>
+<div id="loadingBuffer" style="height: 100%;
+            width: 100%;
+            background: black;
+            position: absolute;
+            z-index: 10000;
+            opacity: 25%;
+            display: none;">
+                <div class="spinner-border" style="width: 3rem;
+                margin-top: 39vh;
+                height: 3rem;
+                margin-left: 56vw;
+                color: floralwhite;" role="status">
+                    <span class="sr-only">Loading...</span>
+                  </div>
+            </div>
+<div id="mainDiv" style="width: 100%; height: 100vh; display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
+    <div id="left-sidebar" class="left-sidebar">
+        <div class="left-sidebar-header">
+            <p id="mySpace">My Space</p>
+            <input id="leftSidbarStatus" type="hidden" value="{{form.sidebarStatus}}" />
+              <svg style="transition: all .3s;" id="collapse-leftsidebar" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-square-fill" viewBox="0 0 16 16">
+                <path d="M16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2zm-4.5-6.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5a.5.5 0 0 0 0-1"/>
+              </svg>
+        </div>
+        <!-- <div class="left-sidebar-search">
+            <input type="text" placeholder="Find Tickets">
+        </div> -->
+        <div class="left-sidebar-content">
+            <ul id="content-list">
+                <li onclick="searchRecentPost('test1', 'test2')">
+                    <a href="{% url 'home' %}?uid={{form.id}}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                        <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+                      </svg>
+                    </a>
+                    <a href="{% url 'home' %}?uid={{form.id}}"><p>Home</p></a>
+                </li>
+                <li>
+                    <a href="{% url 'tickets' %}?uid={{form.id}}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                  </svg>
+                </a>
+                   <a href="{% url 'tickets' %}?uid={{form.id}}"><p>Find Tickets</p></a></li>
+                <li><a href="{% url 'myTickets' %}?uid={{form.id}}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-ticket" viewBox="0 0 16 16">
+                    <path d="M0 4.5A1.5 1.5 0 0 1 1.5 3h13A1.5 1.5 0 0 1 16 4.5V6a.5.5 0 0 1-.5.5 1.5 1.5 0 0 0 0 3 .5.5 0 0 1 .5.5v1.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 11.5V10a.5.5 0 0 1 .5-.5 1.5 1.5 0 1 0 0-3A.5.5 0 0 1 0 6zM1.5 4a.5.5 0 0 0-.5.5v1.05a2.5 2.5 0 0 1 0 4.9v1.05a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-1.05a2.5 2.5 0 0 1 0-4.9V4.5a.5.5 0 0 0-.5-.5z"/>
+                  </svg></a> <a href="{% url 'myTickets' %}?uid={{form.id}}"><p>My Tickets</p></a></li>
+                <li><a id="sett1" style="cursor: pointer;" onclick="openSettings()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                    <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+                  </svg></a> <a id="sett2" style="cursor: pointer;" onclick="openSettings()"><p>Settings</p></a></li>
+            </ul>
+        </div>
+    </div>
+    <div id="settingsMainContainer" class="settingsMainContainer-hide">
+        <div class="settings-header">
+            <p>Settings</p>
+            <a onclick="closeSett()"><i class="fa-regular fa-circle-xmark fa-lg"></i></a>
+        </div>
+        <div class="settingsContent">
+            <div class="section-display">
+                <span>Display: </span>
+                <!-- <a onclick="lightMode()"><i class="fa-solid fa-sun fa-lg"></i></a> -->
+                <a id="moon" onclick="darkMode()"><i class="fa-solid fa-moon fa-lg"></i></a>
+                <input id="displayStatus" type="hidden" value="{{form.displayStatus}}" />
+            </div>
+        </div>
+    </div>
+    <div id="main-section" class="main-section">
+        {% block mainContent %}
+            <div class="my-recents">
+                <div id="myRecentsHeader" class="my-recents-header">
+                    My Recents
+                </div>
+                <div class="my-recents-content">
+                        {% if recents %}
+                        <div class="swiper" style="    height: 35vh; padding-top: 1vh;
+    margin-top: -12vh;">
+                            <div id="recentList" style="padding-top: 11vh;" class="swiper-wrapper">
+                            {% if recents %}
+                                {% for i in recents %}
+                                    <div id="recentItem" style="text-align: center;
+                                    height: fit-content;
+                                    font-size: 18px;
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    width: 26vw;
+                                    padding: 1rem;
+                                    background-color: rgb(255, 135, 190);
+                                    background-image: linear-gradient(61deg, rgb(255, 135, 190) 0%, rgb(255, 156, 93) 100%);
+                                    border-radius: 22px;
+                                    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+                                    margin-right: 5vw;" class="recentSearchContainer swiper-slide">
+                                        <div class="recentSearchLocations">
+                                            <div class="fromLocation">
+                                                <p>From:</p>&nbsp;&nbsp;&nbsp; {{i.origin}}
+                                            </div>
+                                            <div class="toLocation">
+                                                <p>To:</p>&nbsp;&nbsp;&nbsp; {{i.destination}}
+                                            </div>
+                                        </div>
+                                        <div class="recentSearchDates">
+                                            <div class="departureDate">
+                                                <p>Departure Date:</p>&nbsp;&nbsp;&nbsp; {{i.departureDate}}
+                                            </div>
+                                            <div class="returnDate">
+                                                <p>Return Date:</p>&nbsp;&nbsp;&nbsp; {{i.returnDate}}
+                                            </div>
+                                        </div>
+                                        <form style="display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        position: absolute;
+                                        width: 13vw;
+                                        margin-right: 6vw;
+                                        margin-top: 15vh;" method="POST" action="{% url 'searchRecent' %}" enctype="multipart/form-data">
+                                                <fieldset>
+                                                    <input type="hidden" value="{{i.origin}}" name="origin"/>
+                                                    <input type="hidden" value="{{i.destination}}" name="destination"/>
+                                                    <input type="hidden" value="{{i.departureDate}}" name="departureDate"/>
+                                                    <input type="hidden" value="{{i.returnDate}}" name="returnDate"/>
+                                                    <input type="hidden" value="{{i.id}}" name="id"/>
+                                                    <input type="hidden" value="{{i.uid}}" name="uid"/>
+                                                    <button type="submit" onclick="searchRecentPost('{{i.id}}', '{{i.uid}}')" id="searchRecentBtn_{{i.id}}" class="searchRecentBtn">Search Tickets</button>
+                                                </fieldset>
+                                            </form>
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                <div style="text-align: center;
+                                font-size: 18px;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;text-align: center;
+                    font-size: 18px;
+                    justify-content: center;
+                    align-items: center;
+                    width: 1128px;
+                    display: flex;
+                    flex-direction: column;font-family: 'Raleway', sans-serif;
+                    font-optical-sizing: auto;
+                    font-weight: 700;
+                    font-style: normal;
+                    font-size: medium;"  class="swiper-slide">Save Some Tickets!
+                                <img style="width: 6vw; margin-top: 2vh;" src="{% static 'treeZen.png' %}"/></div>
+                                {% endif %}
+                            </div>
+                            <div class="swiper-pagination"></div>
+                        
+                            <div style="color: #cb4e00;
+                            box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+                            border-radius: 5px;
+                        ;" class="swiper-button-prev"></div>
+                            <div style="color: #cb4e00;
+                            box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+                            border-radius: 5px;
+                        ;" class="swiper-button-next"></div>
+                        
+                        </div>
+                        {% else %}
+                        <div style="margin-left: 31vw; margin-top: 6vh;" class="inspirationError">
+                            Find Your Next Flight
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="explore-tickets">
+                <div class="explore-tickets-header">
+                    Explore <br><small style="font-size: small;
+    font-weight: 400;">Based on Current Location: {{currentLocation}}</small>
+                </div>
+                <div class="explore-tickets-content">
+                    {% if inspiration %}
+                    <div class="swiper" style="height: 45vh; width: 70vw;">
+                        <!-- Additional required wrapper -->
+                        <div id="recentList" class="swiper-wrapper">
+                          <!-- Slides -->
+                           {% if inspiration %}
+                            {% for i in inspiration %}
+                                <div id="recentItem" style="text-align: center; height: 39vh;
+                                font-size: 18px;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;" class="swiper-slide"><div id="myTicket" style="max-width: 40rem; width: 21vw;
+                                        height: fit-content;
+                                        background: peachpuff;
+                                        padding: 1.5rem;
+                                        display: flex;
+                                        flex-direction: column;
+                                        box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+                                        background-color: #ff87be;
+                                        background-image: linear-gradient(-9deg, #ff87be 0%, #ff9c5d 100%);">
+                                        <div style="display: flex; flex-direction: row;">
+                                            <div class="" style="font-size: 26;color: darkred;display: flex;
+                                            font-size: 26;
+                                            color: darkred;
+                                            flex-direction: row;
+                                            margin-bottom: 1.5vh;">${{ i.price.total }}
+                                            </div>
+                                            <a href="{% url 'save_explore_ticket' i.price.total i.origin i.destination i.departureDate i.returnDate form.id %}" id="saveFlight"><input style="    background: coral;
+                                                margin-left: 10vw;
+                                                border-radius: 9px;
+                                                Font-family: 'Raleway', sans-serif;
+                                                font-optical-sizing: auto;
+                                                font-weight: 400;
+                                                font-style: normal;
+                                                color: white;
+                                                font-size: smaller;" type="Submit" name="bookFlight" value="Save Flight" /></a>
+                                        </div>
+                                            <div class="">
+                                                <div class="">
+                                                    <h4 style="font-optical-sizing: auto;
+                                                    font-weight: 700;
+                                                    font-style: normal;
+                                                    color: white; display: flex;
+                                                    flex-direction: column;"
+                                                    ">Departure From
+                                                    <h4 style="font-optical-sizing: auto;
+                                                        font-weight: 500;
+                                                        font-style: normal;
+                                                        font-size: larger;
+                                                        color: white;">{{ i.origin }}&nbsp;&nbsp;&nbsp;&#10230&nbsp;&nbsp;&nbsp;{{ i.destination }}</h4><br>
+                        <span style="font-optical-sizing: auto;
+                        font-weight: 500;
+                        font-style: normal;
+                        color: white; font-size: 15px;" class="smallstyle">Departure Date: {{ i.departureDate }}</span></h4>
+                                                        
+                                                            <!-- <p class="nounderline elegantstyle">Connection duration is {{ i.0stop_time }}</p> -->
+                                                            <!-- <h4 style="font-optical-sizing: auto;
+                                                            font-weight: 500;
+                                                            font-style: normal;
+                                                            font-size: larger;
+                                                            color: white;"><img src={{ i.zeroSecondFlightAirlineLogo }} alt={{ i.zeroSecondFlightAirline }}> {{ i.zeroSecondFlightDepartureDate }} {{ i.zeroSecondFlightDepartureAirport }}
+                                                                <a href="#" data-toggle="tooltip" class="nounderline text-info" title={{ i.zeroSecondFlightArrivalDuration }} duration>&#10230</a> {{ i.zeroSecondFlightArrivalAirport }} {{ i.zeroSecondFlightArrivalDate }}</h4> -->
+                                                    <hr class="">
+                                                    <h4 style="font-optical-sizing: auto;
+                                                    font-weight: 700;
+                                                    font-style: normal;
+                                                    color: white; display: flex;
+                                                    flex-direction: column;" class="">Return To
+                                                    <h4 style="font-optical-sizing: auto;
+                                                    font-weight: 500;
+                                                    font-style: normal;
+                                                    font-size: larger;
+                                                    color: white;">{{ i.destination }}&nbsp;&nbsp;&nbsp;&#10230&nbsp;&nbsp;&nbsp;{{ i.origin }}</h4><br>
+                        <span style="font-optical-sizing: auto;
+                        font-weight: 500;
+                        font-style: normal;
+                        color: white; font-size: 15px;" class="smallstyle">Return Date: {{ i.returnDate }}</span></h4></h4>
+                                                            
+                                                                <!-- <p class="">Connection duration is {{ i.1stop_time }}</p> -->
+                                                                <!-- <h4 style="font-optical-sizing: auto;
+                                                                font-weight: 500;
+                                                                font-style: normal;
+                                                                font-size: larger;
+                                                                color: white;"><img src={{ i.oneSeconddFlightAirlineLogo }} alt={{ i.oneSeconddFlightAirline }}> {{ i.oneSeconddFlightDepartureDate }} {{ i.oneSeconddFlightDepartureAirport }}
+                                                                    <a href="#" data-toggle="tooltip" class="" title={{ i.oneSeconddFlightArrivalDuration }} duration>&#10230</a> {{ i.oneSeconddFlightArrivalAirport }} {{ i.oneSeconddFlightArrivalDate }}</h4> -->
+                                                </div>
+                                            </div>
+                                        </div></div>
+                                {% endfor %}
+                            {% else %}
+                            <div style="text-align: center;
+                            font-size: 18px;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;text-align: center;
+                font-size: 18px;
+                justify-content: center;
+                align-items: center;
+                width: 1128px;
+                display: flex;
+                flex-direction: column;font-family: 'Raleway', sans-serif;
+                font-optical-sizing: auto;
+                font-weight: 700;
+                font-style: normal;
+                font-size: medium;"  class="swiper-slide">Save Some Tickets!
+                            <img style="width: 6vw; margin-top: 2vh;" src="{% static 'treeZen.png' %}"/></div>
+                            {% endif %}
+                        </div>
+                        <!-- If we need pagination -->
+                        <div class="swiper-pagination"></div>
+                      
+                        <!-- If we need navigation buttons -->
+                        <div style="color: #ffb282;" class="swiper-button-prev"></div>
+                        <div style="color: #ffb282;" class="swiper-button-next"></div>
+                      
+                        <!-- If we need scrollbar -->
+                        <!-- <div class="swiper-scrollbar"></div> -->
+                      </div>
+                    {% else %}
+                    <div class="inspirationError">
+                        {{inspirationError}}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endblock %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    // const appTitle = document.getElementById('app-title');
+    // appTitle.style.color = "black"
+
+    const profileBuffer = document.getElementById('profile-buffer');
+
+    const profContainer = document.getElementById('profile-container');
+    const profOptions = document.getElementById('profile-options');
+    profContainer.addEventListener('click', function() {
+        if (profOptions.classList.contains("profile-options-hide") && profileBuffer.classList.contains('profile-buffer-hide')) {
+            profOptions.classList.remove('profile-options-hide');
+            profOptions.classList.add('profile-options-show');
+            profileBuffer.classList.remove('profile-buffer-hide');
+        } else if (profOptions.classList.contains("profile-options-show")) {
+            profOptions.classList.add('profile-options-hide');
+            profOptions.classList.remove('profile-options-show');
+            profileBuffer.classList.add('profile-buffer-hide');
+        }
+    })
+
+    profileBuffer.addEventListener('click', function() {
+        if(!profileBuffer.classList.contains('profile-buffer-hide')) {
+            profileBuffer.classList.add('profile-buffer-hide');
+            profOptions.classList.add('profile-options-hide');
+            profOptions.classList.remove('profile-options-show');
+        }
+    })
+
+    const body = document.body
+    body.style.overflowY = "hidden"
+
+    const collapse = document.getElementById('collapse-leftsidebar');
+    const leftSidebar = document.getElementById('left-sidebar');
+    const contentList = document.getElementById('content-list')
+    const leftSidebarP = contentList.getElementsByTagName('p')
+    const mySpace = document.getElementById('mySpace');
+
+    collapse.addEventListener('click', function() {
+        if (leftSidebar.classList.contains("left-sidebar-collapse")) {
+            leftSidebar.classList.remove('left-sidebar-collapse');
+            leftSidebar.classList.add('left-sidebar');
+            document.cookie="leftsidebarCollapse=false";
+            mySpace.style.display = "block";
+            for (let i =0; i < leftSidebarP.length; i++) {
+                leftSidebarP[i].style.display = "block";
+            }
+            collapse.classList.remove('rotate-collapse'); 
+        } else if (leftSidebar.classList.contains("left-sidebar")) {
+            leftSidebar.classList.add('left-sidebar-collapse');
+            leftSidebar.classList.remove('left-sidebar');
+            document.cookie="leftsidebarCollapse=true";
+            console.log(leftSidebarP[0])
+            mySpace.style.display = "none";
+            for (let i =0; i < leftSidebarP.length; i++) {
+                leftSidebarP[i].style.transition = "all 1s";
+                leftSidebarP[i].style.display = "none";
+            }
+            collapse.classList.add('rotate-collapse'); 
+        }
+    })
+
+    // const leftSidebarCookie = "leftsidebarCollapse";
+    // console.log(leftSidebarCookie)
+    // const collapseCookieValue = getCookie(leftSidebarCookie)
+    // console.log(collapseCookieValue)
+
+    // function getCookie(cname) {
+    // let name = cname + "=";
+    // let ca = document.cookie.split(';');
+    // for(let i = 0; i < ca.length; i++) {
+    //     let c = ca[i];
+    //     while (c.charAt(0) == ' ') {
+    //     c = c.substring(1);
+    //     }
+    //     if (c.indexOf(name) == 0) {
+    //     return c.substring(name.length, c.length);
+    //     }
+    // }
+    // return "";
+    // }
+
+    // if (collapseCookieValue == "true") {
+    //     leftSidebar.classList.add('left-sidebar-collapse');
+    //         leftSidebar.classList.remove('left-sidebar');
+    //         console.log(leftSidebarP[0])
+    //         mySpace.style.display = "none";
+    //         for (let i =0; i < leftSidebarP.length; i++) {
+    //             leftSidebarP[i].style.transition = "all 1s";
+    //             leftSidebarP[i].style.display = "none";
+    //         }
+    //         collapse.classList.add('rotate-collapse'); 
+    // }
+    const leftSidbarStatus = document.getElementById("leftSidbarStatus");
+    const collapseleftsidebar = document.getElementById('collapse-leftsidebar');
+    const myId = document.getElementById("myId").value;
+    
+    collapseleftsidebar.addEventListener('click', () => updateSidebarStatus(myId))
+
+    function updateSidebarStatus() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            console.log("worked");
+        }
+        };
+        var id = myId
+        xhttp.open('GET', `updateSidebarStatus?data=` + id, true);
+        xhttp.send();
+    
+    }
+
+    const sidebarStatus = document.getElementById('leftSidbarStatus');
+
+    if (sidebarStatus.value == 1) {
+        leftSidebar.classList.remove('left-sidebar-collapse');
+        leftSidebar.classList.add('left-sidebar');
+        mySpace.style.display = "block";
+        for (let i =0; i < leftSidebarP.length; i++) {
+            leftSidebarP[i].style.display = "block";
+        }
+        collapse.classList.remove('rotate-collapse'); 
+    } else if (sidebarStatus.value == 0) {
+        leftSidebar.style.transitionDuration = "0ms;"
+        leftSidebar.classList.add('left-sidebar-collapse');
+        leftSidebar.classList.remove('left-sidebar');
+        console.log(leftSidebarP[0])
+        mySpace.style.display = "none";
+        for (let i =0; i < leftSidebarP.length; i++) {
+            leftSidebarP[i].style.transition = "all 1s";
+            leftSidebarP[i].style.display = "none";
+        }
+        collapse.classList.add('rotate-collapse'); 
+        }
+
+        const recentList = document.getElementById('recentList');
+        console.log(recentList.childElementCount)
+        const recentItem = document.getElementById('recentItem');
+
+        if (recentList.childElementCount == 1) {
+            recentItem.style.marginLeft = "15vw";
+        }
+        
+
+
+    const swiper = new Swiper('.swiper', {
+        // Optional parameters
+        direction: 'horizontal',
+        loop: true,
+        spaceBetween: 15,
+        slidesPerView: 2,
+        loop: true,
+        freemode: true,
+        speed: 1000,
+
+        // If we need pagination
+        pagination: {
+            el: '.swiper-pagination',
+        },
+
+        // Navigation arrows
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+
+    });
+
+    // const myCsrf = "csrftoken";
+    // const myCsrfValue = getCookie(myCsrf);
+    // console.log(myCsrfValue);
+
+    // function getCookie(cname) {
+    //     let name = cname + "=";
+    //     let ca = document.cookie.split(';');
+    //     for(let i = 0; i < ca.length; i++) {
+    //         let c = ca[i];
+    //         while (c.charAt(0) == ' ') {
+    //         c = c.substring(1);
+    //         }
+    //         if (c.indexOf(name) == 0) {
+    //         return c.substring(name.length, c.length);
+    //         }
+    //     }
+    //     return "";
+    // }
+
+
+    // const searchRecentBtn = document.getElementById('searchRecentBtn');
+    const loadingBuffer = document.getElementById('loadingBuffer');
+    
+    function searchRecentPost(id, uid) {
+        // $.ajax({
+        //         url: "{% url 'searchRecent' %}",
+        //         method: "POST",
+        //         data:
+        //         {
+        //             id: id,
+        //             uid: uid
+        //         },
+        //         datatype: "json"
+        //     });
+            loadingBuffer.style.display = "block";
+        }
+        
+        const mySavedSearch = document.getElementById('searchMySavedTickets');
+        $(function() {
+            mySavedSearch.style.display = "none";
+        })
+        
+        var result= '';
+        function searchSaved(data, id) {
+            const mySavedSearch = document.getElementById('searchMySavedTickets');
+            const searchbarRecent = document.getElementById('searchbarRecent');
+            if (data == "") {
+                mySavedSearch.style.display = "none";
+            } else if (data != "") {
+                mySavedSearch.style.display = "flex";
+                $.ajax({
+                url: "{% url 'myRecents' %}",
+                method: "GET",
+                async: false,
+                data: {
+                    searchKey: data,
+                    id: id
+                },
+                datatype: "json",
+                success: function(response) {
+                    result = response
+                    mySavedSearch.innerHTML = result
+                }
+            });
+            }
+        }
+
+        const displayStatus = document.getElementById("displayStatus").value
+        const mainSection = document.getElementById("main-section")
+        const moon = document.getElementById("moon");
+        const header = document.getElementById("header");
+
+        var headerText = document.getElementById("app-title");
+        var greetingText = document.getElementById("greeting");
+        // var myRecentsHeader = document.getElementById("my-recents-header");
+        // var myRecentsHeaderHome = document.getElementById("myRecentsHeader")
+
+        moon.addEventListener('click', () => changeDisplay(myId))
+
+        function darkMode() {
+            if (mainSection.classList.contains("main-section-dark") && header.classList.contains("header-dark")) {
+                mainSection.classList.remove("main-section-dark");
+                header.classList.remove("header-dark")
+                headerText.style.color = "black";
+                greetingText.style.color = "black";
+                mainSection.style.color = "black"
+                // myRecentsHeader.style.color = "black";
+                // myRecentsHeaderHome.style.color = "black";
+            } else {
+                mainSection.classList.add("main-section-dark")
+                header.classList.add("header-dark")
+                headerText.style.color = "white";
+                greetingText.style.color = "white";
+                mainSection.style.color = "white";
+                // myRecentsHeader.style.color = "white";
+                // myRecentsHeaderHome.style.color = "white";
+            }
+
+        }
+
+        function changeDisplay(id) {
+            // var xhttp = new XMLHttpRequest();
+            // xhttp.onreadystatechange = function() {
+            // if (this.readyState == 4 && this.status == 200) {
+            //     console.log("worked");
+            // }
+            // };
+            // var id = myId
+            // xhttp.open('GET', `updateDisplay?data=`, id, true);
+            // xhttp.send(); 
+            $.ajax({
+                url: "{% url 'updateDisplay' %}",
+                method: "GET",
+                async: false,
+                data: {
+                    id: id
+                },
+                datatype: "json",
+                success: function(response) {
+                    result = response
+                }
+            });           
+        }
+
+
+        if (displayStatus == 1) {
+            mainSection.classList.add("main-section-dark")
+            header.classList.add("header-dark")
+            headerText.style.color = "white";
+            greetingText.style.color = "white";
+            mainSection.style.color = "white";
+            // myRecentsHeader.style.color = "white";
+            // myRecentsHeaderHome.style.color = "white";
+        } else {
+            mainSection.classList.remove("main-section-dark")
+            header.classList.remove("header-dark")
+            headerText.style.color = "black";
+            greetingText.style.color = "black";
+            mainSection.style.color = "black";
+            // myRecentsHeader.style.color = "black";
+            // myRecentsHeaderHome.style.color = "black";
+        }
+
+        const settingsContainer = document.getElementById('settingsMainContainer');
+        function openSettings() {
+            if (settingsContainer.classList.contains("settingsMainContainer-show")) {
+                settingsContainer.classList.remove("settingsMainContainer-show");
+            } else {
+                settingsContainer.classList.add("settingsMainContainer-show");
+            }
+        }
+
+        function closeSett() {
+            if (settingsContainer.classList.contains("settingsMainContainer-show")) {
+                settingsContainer.classList.remove("settingsMainContainer-show");
+            } else {
+                settingsContainer.classList.add("settingsMainContainer-show");
+            }
+        }
+
+    // $(searchRecentBtn).click(function() {
+    //     $.ajax({
+    //             url: "{% url 'searchRecent' %}",
+    //             method: "POST",
+    //             data:
+    //             {
+    //                 test: "test",
+    //             },
+    //             datatype: "json"
+    //         });
+        // $.post("{% url 'searchRecent' %}",
+        //     {
+        //         test: "test"
+        //     },
+        //     function(data, status) {
+        //         console.log("worked")
+        //     }
+        // )
+    // })
+    const searchedId = document.getElementById("searchedId").value;
+    
+    // console.log(recentList)
+    for (i=0; i<recentList.childElementCount; i++) {
+        // console.log(recentList.children[i])
+        // console.log(recentList.children[i].children[0].id.slice(-2))
+        // console.log(searchedId)
+        if (recentList.children[i].children[0].id.slice(-2) == searchedId) {
+            var uniqueSeachedId = document.getElementById("myTicket_" + searchedId)
+            var uniqueSeachedIdParent = uniqueSeachedId.parentNode;
+
+            console.log(uniqueSeachedIdParent.getAttribute("data-swiper-slide-index"))
+
+            const activeSwiper = uniqueSeachedIdParent.getAttribute("data-swiper-slide-index")
+            
+            uniqueSeachedId.animate({
+                transition: 'all 1s ease-in-out',
+                transform:  'scale(1.05,1.05)'
+            }, 1500, function() {
+                uniqueSeachedId.animate({
+                transition: 'all 1s ease-in-out',
+                transform:  'scale(1,1)'
+                }, 1500, function() {
+                    pulse();
+                });
+            });
+        }
+    }
+  </script>
+
+{% endblock %}

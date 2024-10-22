@@ -1,0 +1,152 @@
+{% extends 'home.html' %}
+{% load static %}
+{% block mainContent %}
+<link href="{% static 'styles.css' %}" rel="stylesheet" type="text/css">
+<div class="my-recents">
+    <div id="my-recents-header" style="width: 8vw;" class="my-recents-header">
+        Saved Tickets
+    </div>
+    <input id="searchedId" type="hidden" value="{{searchedId}}" />
+    <div style="width: 89%;" class="my-recents-content">
+        <div class="swiper" style="height: 45vh; width: 70vw;">
+            <!-- Additional required wrapper -->
+            <div id="recentList" style="justify-content: center;
+    display: flex;" class="swiper-wrapper">
+              <!-- Slides -->
+               {% if tickets %}
+                {% for i in tickets %}
+                <div id="recentItem" style="text-align: center; height: 39vh;
+                font-size: 18px;
+                display: flex;
+                justify-content: center;
+                align-items: center;" class="swiper-slide"><div id="myTicket_{{i.id}}" style="max-width: 40rem; width: 21vw;
+                        height: fit-content;
+                        background: peachpuff;
+                        padding: 1.5rem;
+                        display: flex;
+                        flex-direction: column;
+                        box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+                        background-color: #ff87be;
+                        background-image: linear-gradient(-9deg, #ff87be 0%, #ff9c5d 100%);">
+                            <div class="" style="font-size: 26;color: darkred;display: flex;
+                            font-size: 26;
+                            color: darkred;
+                            flex-direction: row;
+                            margin-bottom: 1.5vh;">${{ i.price }}
+                                <a href="{% url 'delete_ticket' form.id i.id %}" id="saveFlight"><input style="    background: coral;
+                                    margin-left: 9.5vw;
+                                    border-radius: 9px;
+                                    Font-family: 'Raleway', sans-serif;
+                                    font-optical-sizing: auto;
+                                    font-weight: 400;
+                                    font-style: normal;
+                                    color: white;
+                                    font-size: smaller;" type="Submit" name="bookFlight" value="Delete Flight" /></a>
+                            </div>
+                            <div class="">
+                                <div class="">
+                                    <h4 style="font-optical-sizing: auto;
+                                    font-weight: 700;
+                                    font-style: normal;
+                                    color: white; display: flex;
+                                    flex-direction: column;
+                                    ">Departure From
+                                    <h4 style="font-optical-sizing: auto;
+                                        font-weight: 500;
+                                        font-style: normal;
+                                        font-size: larger;
+                                        color: white;">{{ i.origin }}&nbsp;&nbsp;&nbsp;&#10230&nbsp;&nbsp;&nbsp;{{ i.destination }}</h4>{% if i.zeroFlightTotalDuration %}<span class="" style="font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        color: white; font-size: 15px;">Total duration {{ i.zeroFlightTotalDuration }}</span>
+        {% else %}
+        <span class="" style="font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        color: white; font-size: 15px;">Total duration N/A</span>
+        {% endif %}<br>
+        <span style="font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        color: white; font-size: 15px;" class="smallstyle">Departure Date: {{ i.departureDate }}</span></h4>
+                                        
+                                            <!-- <p class="nounderline elegantstyle">Connection duration is {{ i.0stop_time }}</p> -->
+                                            <!-- <h4 style="font-optical-sizing: auto;
+                                            font-weight: 500;
+                                            font-style: normal;
+                                            font-size: larger;
+                                            color: white;"><img src={{ i.zeroSecondFlightAirlineLogo }} alt={{ i.zeroSecondFlightAirline }}> {{ i.zeroSecondFlightDepartureDate }} {{ i.zeroSecondFlightDepartureAirport }}
+                                                <a href="#" data-toggle="tooltip" class="nounderline text-info" title={{ i.zeroSecondFlightArrivalDuration }} duration>&#10230</a> {{ i.zeroSecondFlightArrivalAirport }} {{ i.zeroSecondFlightArrivalDate }}</h4> -->
+                                    <hr class="">
+                                    <h4 style="font-optical-sizing: auto;
+                                    font-weight: 700;
+                                    font-style: normal;
+                                    color: white; display: flex;
+                                    flex-direction: column;" class="">Return To
+                                    <h4 style="font-optical-sizing: auto;
+                                    font-weight: 500;
+                                    font-style: normal;
+                                    font-size: larger;
+                                    color: white;">{{ i.destination }}&nbsp;&nbsp;&nbsp;&#10230&nbsp;&nbsp;&nbsp;{{ i.origin }}</h4>{% if i.oneFlightTotalDuration %}<span class="" style="font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        color: white; font-size: 15px;">Total duration {{ i.oneFlightTotalDuration }}</span>
+        {% else %}
+        <span class="" style="font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        color: white; font-size: 15px;">Total duration N/A</span>
+        {% endif %}
+        <br>
+        <span style="font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        color: white; font-size: 15px;" class="smallstyle">Return Date: {{ i.returnDate }}</span></h4></h4>
+                                            
+                                                <!-- <p class="">Connection duration is {{ i.1stop_time }}</p> -->
+                                                <!-- <h4 style="font-optical-sizing: auto;
+                                                font-weight: 500;
+                                                font-style: normal;
+                                                font-size: larger;
+                                                color: white;"><img src={{ i.oneSeconddFlightAirlineLogo }} alt={{ i.oneSeconddFlightAirline }}> {{ i.oneSeconddFlightDepartureDate }} {{ i.oneSeconddFlightDepartureAirport }}
+                                                    <a href="#" data-toggle="tooltip" class="" title={{ i.oneSeconddFlightArrivalDuration }} duration>&#10230</a> {{ i.oneSeconddFlightArrivalAirport }} {{ i.oneSeconddFlightArrivalDate }}</h4> -->
+                                </div>
+                            </div>
+                        </div></div>
+                    {% endfor %}
+                {% else %}
+                <div style="text-align: center;
+                font-size: 18px;
+                display: flex;
+                justify-content: center;
+                align-items: center;text-align: center;
+    font-size: 18px;
+    justify-content: center;
+    align-items: center;
+    width: 1128px;
+    display: flex;
+    flex-direction: column;font-family: 'Raleway', sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    font-size: medium;"  class="swiper-slide">Save Some Tickets!
+                <img style="width: 6vw; margin-top: 2vh;" src="{% static 'treeZen.png' %}"/></div>
+                {% endif %}
+            </div>
+            <!-- If we need pagination -->
+            <div class="swiper-pagination"></div>
+          
+            <!-- If we need navigation buttons -->
+            <div style="color: #ffb282;" class="swiper-button-prev"></div>
+            <div style="color: #ffb282;" class="swiper-button-next"></div>
+          
+            <!-- If we need scrollbar -->
+            <!-- <div class="swiper-scrollbar"></div> -->
+          </div>
+    </div>
+</div>
+
+<script>      
+    
+</script>
+{% endblock %}

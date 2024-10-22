@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
+
+<header style="align-items: center;">
+  <a style="display: flex; flex-direction: row; text-decoration: none; align-items: center;" href="{% url 'index' %}" style="display: block; cursor: pointer;">
+      <div class="logo-container">
+          <svg class="logo" width="149" height="119" viewBox="0 0 149 119" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M70 57.5L10.75 104.698L10.75 10.3016L70 57.5Z" fill="#DD9F9F"/>
+          <path d="M11 9L148.339 67.4259L101.503 80.9344L11 9Z" fill="#CB4C45"/>
+          <path d="M11.5 106L71 58.5L100 81.5L11.5 106Z" fill="#EB7A7A"/>
+          </svg>
+      </div>
+      <div id="app-title" class="whiteTitle">
+          <p>TicketZen</p>
+      </div>
+  </a>
+  <!-- <nav>
+      <ul>
+          <li><a>Home</a></li>
+          <li><a>Tickets</a></li>
+          <li><a>Favorites</a></li>
+      </ul>
+  </nav> -->
+  <div class="login-register">
+      <div onmouseover="register()" onmouseout="registerClear()" id="register" class="register">
+          <a style="text-decoration: none; color: white;" href="{% url 'register' %}"><p>Register</p></a>
+      </div>
+      <div id="login" class="login login-register-active">
+          <a style="text-decoration: none; color: white;" href="{% url 'login' %}"><p>Login</p></a>
+      </div>
+  </div>
+</header>
+<section>
+  <div class="register-container">
+    <div class="register-title">
+      <p>
+        Register
+      </p>
+    </div>
+    <form method="POST" action="{% url 'register' %}" enctype="multipart/form-data">
+      <fieldset>
+        {% csrf_token %}
+        <div class="reg-name">
+          <div class="box-fname">
+            <!-- <input name="firstName" required type="text"/> -->
+            {{form.firstName}}
+            <p>First name</p>
+            {% for err in form.firstName.errors %}
+            <small class="text-danger">{{ err }}</small>
+          {% endfor %}
+          </div>
+          <div class="box-lname">
+            <!-- <input name="lastName" required type="text"/> -->
+            {{form.lastName}}
+            <p>Last name</p>
+            {% for err in form.lastName.errors %}
+              <small class="text-danger">{{ err }}</small>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="box-username">
+          <input id="username" name="username" required type="text" hx-post="{% url 'check_username' %}" hx-target="#username-check" hx-trigger="keyup"/>
+          <!-- {{form.username}} -->
+          <p>Username</p>
+          <div id="username-check">
+
+          </div>
+          <!-- {% for err in form.username.errors %}
+              <small class="text-danger">{{ err }}</small>
+            {% endfor %} -->
+        </div>
+        <div class="box-email">
+          <input id="email" name="email" required type="email" hx-post="{% url 'check_email' %}" hx-target="#email-check" hx-trigger="keyup"/>
+          <!-- {{form.email}} -->
+          <p>Email</p>
+          <div id="email-check">
+
+          </div>
+          <!-- {% for err in form.email.errors %}
+              <small class="text-danger">{{ err }}</small>
+            {% endfor %} -->
+        </div>
+        <div class="box-password">
+          <!-- <input name="password" required type="password"/> -->
+          {{form.password}}
+          <p>Password</p>
+          {% for err in form.password.errors %}
+              <small class="text-danger">{{ err }}</small>
+            {% endfor %}
+        </div>
+        <div style="margin-top: 1.5vh;" class="box-repassword">
+          <!-- <input name="repassword" required type="password"/> -->
+          {{form.repassword}}
+          <p>Re-enter password</p>
+          {% for err in form.repassword.errors %}
+              <small class="text-danger">{{ err }}</small>
+            {% endfor %}
+        </div>
+        <!-- {{form}} -->
+        
+        <div style="margin-left: 7.5vw;" class="box-submit">
+          <button type="submit">Register</button>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</section>
+
+<script>
+  const loginTab = document.getElementById('login');
+    const registerTab = document.getElementById('register');
+    
+    function register() {
+        if(loginTab.classList.contains('login-register-active')) {
+            registerTab.classList.add('login-register-active');
+            loginTab.classList.remove('login-register-active');
+        }
+    }
+
+    function registerClear() {
+        loginTab.classList.add('login-register-active');
+        registerTab.classList.remove('login-register-active');
+    }
+    
+  const appTitle = document.getElementById('app-title');
+  appTitle.style.color = "black"
+</script>
+{% endblock %}

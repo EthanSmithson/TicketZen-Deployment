@@ -1,0 +1,197 @@
+{% extends 'tickets.html' %}
+{% load static %}
+{% block ticketResults %}
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <title>Amadeus Flight Booking</title>
+</head>
+<body onload="pagination()">
+  <div class="row pt-5" class="forTicketCount" style="display: flex;
+  flex-direction: column;
+  align-items: center;">
+    <div class="col-md-5">
+        <h3 style="text-align: center;
+        margin-left: -19vw;
+        margin-bottom: 5vh;" class="login-heading pl-3">{{ origin }} &#x2708 {{ destination }} <br>{{ departureDate }}
+        {% if returnDate %} <span class="text-info">&#10594&#10596</span> {{ returnDate }}{% endif %}</h3>
+        {% if tripPurpose %} <h4 class="login-heading mb-4 mt-4 pl-3">Flying for <span style="font-size: 26;color: darkred;">{{ tripPurpose }} </span> purposes</h4> {% endif %}
+    </div>
+    <div class="" style="display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: auto;
+    grid-gap: 1rem;">
+    <div id="ticketList" style="width: 100%;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: auto;
+    grid-gap: 2rem;
+    display: grid;">
+        {% if response %}
+            {% for r, flight in response %}
+                {% if r.0firstFlightDepartureDate %}
+                    <div id="myTicket" style="max-width: 40rem; width: 21vw;
+                    height: fit-content;
+                    background: peachpuff;
+                    padding: 1.5rem;
+                    display: flex;
+                    flex-direction: column;
+                    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+                    background-color: #ff87be;
+                    background-image: linear-gradient(-9deg, #ff87be 0%, #ff9c5d 100%);">
+                    <input type="hidden" value="{{originLocation}}">
+                    <input type="hidden" value="{{destinationLocation}}">
+                        <div class="" style="font-size: 26;color: darkred;">${{ r.price }}
+                            <a href="{% url 'save_ticket' r.0FlightTotalDuration r.0firstFlightDepartureDate r.0firstFlightDepartureAirport r.0firstFlightArrivalAirport r.0firstFlightArrivalDate r.1firstFlightDepartureAirport r.1FlightTotalDuration r.1firstFlightDepartureDate r.1firstFlightArrivalAirport r.1firstFlightArrivalDate origin destination departureDate returnDate r.price form.id %}" id="saveFlight"><input style="    background: coral;
+                                margin-left: 10vw;
+                                border-radius: 9px;
+                                Font-family: 'Raleway', sans-serif;
+                                font-optical-sizing: auto;
+                                font-weight: 400;
+                                font-style: normal;
+                                color: white;
+                                font-size: smaller;" type="Submit" name="bookFlight" value="Save Flight" /></a>
+                        </div>
+                        <div class="">
+                            <div class="">
+                                <h4 style="Font-family: 'Raleway', sans-serif;
+                                font-optical-sizing: auto;
+                                font-weight: 700;
+                                font-style: normal;
+                                color: white;
+                                ">Departure <span style="Font-family: 'Raleway', sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-size: small;
+    color: white;
+    display: flex;" class="smallstyle">Total duration {{ r.0FlightTotalDuration }}</span></h4>
+                                    <h4 style="font-optical-sizing: auto;
+                                    font-weight: 500;
+                                    font-style: normal;
+                                    font-size: larger;
+                                    color: white;"><img src={{ r.0firstFlightAirlineLogo }} alt={{ r.0firstFlightAirline }}> {{ r.0firstFlightDepartureDate }} {{ r.0firstFlightDepartureAirport }}
+                                        <a href="#" data-toggle="tooltip" class="" title={{ r.0firstFlightArrivalDuration }} duration>&#10230</a> {{ r.0firstFlightArrivalAirport }} {{ r.0firstFlightArrivalDate }}</h4>
+                                    {% if r.0secondFlightDepartureAirport %}
+                                        <!-- <p class="nounderline elegantstyle">Connection duration is {{ r.0stop_time }}</p> -->
+                                        <h4 style="font-optical-sizing: auto;
+                                        font-weight: 500;
+                                        font-style: normal;
+                                        font-size: larger;
+                                        color: white;"><img src={{ r.0secondFlightAirlineLogo }} alt={{ r.0secondFlightAirline }}> {{ r.0secondFlightDepartureDate }} {{ r.0secondFlightDepartureAirport }}
+                                            <a href="#" data-toggle="tooltip" class="nounderline text-info" title={{ r.0secondFlightArrivalDuration }} duration>&#10230</a> {{ r.0secondFlightArrivalAirport }} {{ r.0secondFlightArrivalDate }}</h4>
+                                    {% endif %}
+                                    {% if r.1firstFlightDepartureAirport %}
+                                <hr class="">
+                                <h4 style="font-optical-sizing: auto;
+                                font-weight: 700;
+                                font-style: normal;
+                                color: white; display: flex;
+                                flex-direction: column;" class="">Return <span class="" style="font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    color: white; font-size: 15px;">Total duration {{ r.1FlightTotalDuration }}</span></h4>
+                                        <h4 style="font-optical-sizing: auto;
+                                        font-weight: 500;
+                                        font-style: normal;
+                                        font-size: larger;
+                                        color: white;"><img src={{ r.1firstFlightAirlineLogo }} alt={{ r.1firstFlightAirline }}> {{ r.1firstFlightDepartureDate }} {{ r.1firstFlightDepartureAirport }}
+                                            <a href="#" data-toggle="tooltip" class="" title={{ r.1firstFlightArrivalDuration }} duration>&#10230</a> {{ r.1firstFlightArrivalAirport }} {{ r.1firstFlightArrivalDate }}</h4>
+                                        {% if r.1secondFlightDepartureAirport %}
+                                            <!-- <p class="">Connection duration is {{ r.1stop_time }}</p> -->
+                                            <h4 style="font-optical-sizing: auto;
+                                            font-weight: 500;
+                                            font-style: normal;
+                                            font-size: larger;
+                                            color: white;"><img src={{ r.1secondFlightAirlineLogo }} alt={{ r.1secondFlightAirline }}> {{ r.1secondFlightDepartureDate }} {{ r.1secondFlightDepartureAirport }}
+                                                <a href="#" data-toggle="tooltip" class="" title={{ r.1secondFlightArrivalDuration }} duration>&#10230</a> {{ r.1secondFlightArrivalAirport }} {{ r.1secondFlightArrivalDate }}</h4>
+                                        {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <!-- <div style="position: absolute;
+            display: flex;
+            width: 100%;
+            padding: 14rem;
+            margin-top: 22vh;" id="paginationBtns">
+                <input id="prevBtn" style="margin-right: 26vw; border-radius: 15px;
+                border-radius: 15px;
+                border: none;
+                background: none;
+                cursor: pointer;" placeholder="Previous"/>
+                <input id="nextBtn" style="border-radius: 15px;
+                border-radius: 15px;
+                border: none;
+                background: none;
+                cursor: pointer;" placeholder="Next" />
+              </div> -->
+        {% else %}
+            <h4 style="    width: 100%;
+            height: 15vh;
+            margin-left: 23.2vw;">No flights found for this itinerary</h4>
+        {% endif %}
+    </div>
+  </div>
+    
+  </div>
+
+<script>
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+
+        // function pagination() {
+        //     const myResults = document.getElementById("results").children[4].children[1].children[0]
+        //     console.log(myResults)
+        //     const numberResults = document.getElementById('results').children[4].children[1].children[0].childElementCount;
+        //     console.log(numberResults)
+        //     var totalPages = Math.floor(numberResults / 21);
+        //     console.log(totalPages)
+        //     var remainderPages = Math.ceil(numberResults % 21);
+        //     console.log(remainderPages)
+
+        //     if (remainderPages > 0) {
+        //         totalPages += 1;
+        //     }
+
+        //     console.log(totalPages)
+
+        //     if (numberResults > 21) {
+        //         var page = 1;
+        //         for (page; page<=totalPages; page++) {
+        //             for (i=((21*page)-21); i<21*page; i++) {
+        //                 // console.log(myResults.children[i])
+        //                 myResults.children[i].classList.add("page_"+page);
+        //             }
+        //         }
+        //         // if (page == totalPages) {
+        //         //     const visiblePage = myResults.getElementsByClassName("page_1");
+        //         //     console.log(visiblePage)
+        //         // }
+        //     }
+
+        //     // const visiblePage = document.getElementsByClassName("page_1");
+        //     // console.log(visiblePage)
+
+            
+        // }
+
+        // const visiblePage = document.getElementsByClassName("page_1");
+        // console.log(visiblePage);
+
+        // document.addEventListener('DOMContentLoaded', function () {
+        //     const itemsPerPage = 5;
+        //     let currentPage = 0;
+        //     const items = Array.from(results.getElementsByClassName('forTicketCount'));
+        // })
+        
+</script>
+
+</body>
+</html>
+
+{% endblock %}

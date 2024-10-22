@@ -1,0 +1,27 @@
+{% load static %}
+{% block searched %}
+    {% if data %}
+        {% for i in data %}
+            <form name="searchedLookup{{i.id}}" style="width: 103%;" method="POST" action="{% url 'searchedLookup' %}" enctype="multipart/form-data">
+                <fieldset>
+                    <div onclick="document.forms['searchedLookup{{i.id}}'].submit()" class="searchedContainer">
+                        <input type="hidden" value="{{i.id}}" name="id"/>
+                        <input type="hidden" value="{{i.uid}}" name="uid"/>
+                        <div class="searchedOrigin">
+                            <span>Origin: </span>{{i.origin}}
+                        </div>
+                        <div class="searchedDestination">
+                            <span>Destination: </span>{{i.destination}}
+                        </div>
+                        <div class="searchedDepartureDate">
+                            <span>Departure Date: </span>{{i.departureDate}}
+                        </div>
+                        <div class="searchedReturnDate">
+                            <span>Return Date: </span>{{i.returnDate}}
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        {% endfor %}
+    {% endif %}
+{%endblock%}

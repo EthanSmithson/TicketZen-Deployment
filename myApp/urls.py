@@ -1,0 +1,36 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('tickets/', views.tickets, name='tickets'),
+    # path('settings/', views.settings, name='settings'),
+    path('searchedLookup/', views.searchedLookup, name='searchedLookup'),
+    # path('findTickets/', views.findTickets, name='findTickets'),
+    path('home/', views.home, name='home'),
+    path('explore/', views.explore, name='explore'),
+    path('register/', views.register, name='register'),
+    path('login/', views.login, name='login'),
+    path('check_username/', views.check_username, name='check_username'),
+    path('check_email/', views.check_email, name='check_email'),
+    path('activate-user/<uidb64>/<token>', views.activate_user, name='activate'),
+    path('origin_airport_search/', views.origin_airport_search, name='origin_airport_search'),
+    path('destination_airport_search/', views.destination_airport_search, name='destination_airport_search'),
+    path('book_flight/<str:flight>/', views.book_flight, name='book_flight'),
+    path('findTickets/', views.findTickets, name='findTickets'),
+    path('save_ticket/<str:zeroFlightTotalDuration>,<str:zeroFirstFlightDepartureDate>,<str:zeroFirstFlightDepartureAirport>,<str:zeroFirstFlightArrivalAirport>,<str:zeroFirstFlightArrivalDate>,<str:oneFirstFlightDepartureAirport>,<str:oneFlightTotalDuration>,<str:oneFirstFlightDepartureDate>,<str:oneFirstFlightArrivalAirport>,<str:oneFirstFlightArrivalDate>,<str:origin>,<str:destination>, <str:departureDate>, <str:returnDate>,<str:price>,<str:uid>', views.save_ticket, name='save_ticket'),
+    path('save_explore_ticket/<str:total>,<str:origin>,<str:destination>,<str:departureDate>,<str:returnDate>,<str:uid>', views.save_explore_ticket, name='save_explore_ticket'),
+    path('myTickets/', views.myTickets, name='myTickets'),
+    path('delete_ticket/<str:uid>,<str:id>', views.delete_ticket, name='delete_ticket'),
+    path('tickets/updateSidebarStatus', views.updateSidebarStatus, name='updateSidebarStatus'),
+    path('home/updateSidebarStatus', views.updateSidebarStatus, name='updateSidebarStatus'),
+    path('login/updateSidebarStatus', views.updateSidebarStatus, name='updateSidebarStatus'),
+    path('myTickets/updateSidebarStatus', views.updateSidebarStatus, name='updateSidebarStatus'),
+    
+    path('tickets/updateDisplay', views.updateDisplay, name='updateDisplay'),
+    path('home/updateDisplay', views.updateDisplay, name='updateDisplay'),
+    path('login/updateDisplay', views.updateDisplay, name='updateDisplay'),
+    path('myTickets/updateDisplay', views.updateDisplay, name='updateDisplay'),
+    path('searchRecent', views.searchRecent, name='searchRecent'),
+    path('myRecents', views.myRecents, name='myRecents'),
+]

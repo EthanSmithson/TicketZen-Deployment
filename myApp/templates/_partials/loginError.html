@@ -1,0 +1,17 @@
+{%  if messages %}
+
+    {% for message in messages %}
+        {% if "login" in message.tags %}
+        <div style="width: 24vw;
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        justify-content: center;
+        margin-left: 37.5vw;
+        margin-top: 15vh;
+        position: absolute;" class="alert alert-danger">
+            {{message}}
+        </div>
+        {%endif%}
+    {% endfor %}
+{% endif %}

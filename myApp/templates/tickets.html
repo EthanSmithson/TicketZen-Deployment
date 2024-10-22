@@ -1,0 +1,657 @@
+{% extends 'home.html' %}
+{% load static %}
+{% block mainContent %}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link href="{% static 'styles.css' %}" rel="stylesheet" type="text/css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<div id="settingsMainContainer" class="settingsMainContainer-hide">
+    <div class="settings-header">
+        <p>Settings</p>
+        <a onclick="closeSett()"><i class="fa-regular fa-circle-xmark fa-lg"></i></a>
+    </div>
+    <div class="settingsContent">
+        <div class="section-display">
+            <span>Display: </span>
+            <!-- <a onclick="lightMode()"><i class="fa-solid fa-sun fa-lg"></i></a> -->
+            <a id="moon" onclick="darkMode()"><i class="fa-solid fa-moon fa-lg"></i></a>
+            <input id="displayStatus" type="hidden" value="{{form.displayStatus}}" />
+        </div>
+    </div>
+</div>
+
+<div class="find-tickets-container" style="overflow-y: scroll;">
+    <input type="hidden" value="{{form.displayStatus}}" id="displayStatus" />
+    <div class="tickets-header">
+        <div class="searchbar-tickets">
+            <form method="POST" action="{% url 'findTickets' %}" id="form_id" enctype="multipart/form-data">
+                <fieldset style="    display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                width: 40vw;">
+                    {% csrf_token %}
+                    <!-- <input onkeyup="handleToLocation()" id="to" class="searchbar-tickets-from" type="text" placeholder="From Destination">
+                    <button type="submit">search</button> -->
+                    <input style="margin-left: -5vw;" name="Origin" id="inputOrigin" class="searchbar-tickets-from" type="text" placeholder="From Destination">
+                    <input  name="Destination" id="inputDestination" class="searchbar-tickets-from" type="text" placeholder="To Destination">
+                    <span style="    font-size: smaller;
+                    color: white;
+                    width: 14vw;
+                    font-weight: 700;
+                    padding-left: 1vw; margin-left: -1vw;">Departure Date:</span>
+                    <input style="width: 11vw; margin-left: -2vw; margin-right: .5vw;" name="Departuredate" id="idDeparturedate" class="searchbar-depart-date" type="date" placeholder="Departure Date">
+                    <span style="    font-size: smaller;
+                    color: white;
+                    width: 12vw;
+                    font-weight: 700;
+                    padding-left: 1vw; margin-left: -1vw;">Return Date:</span>
+                    <input style="width: 11vw; margin-left: -2vw;" name="Returndate" id="idReturndate" class="searchbar-return-date" type="date" placeholder="Return Date">
+                    <input  name="uid" value="{{form.id}}" type="hidden">
+                    <div id="searchBtn" onclick="searchRecentPost('test1', 'test2')" style="width: fit-content;height: fit-content; margin-right: -4vw; margin-left: 1.2vw; margin-top: -.7vh;"><input type="Submit" class="searchTicketsBtn" name="Submit" value="Search Flight" onclick="searchRecentPost('test1', 'test2')" /></div>
+                </fieldset>
+            </form>
+        </div>
+        <!-- <div id="toLocationData">
+
+        </div> -->
+        <!-- <div id="filter" class="filter">
+            <p>Filters</p>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-compact-down" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1.553 6.776a.5.5 0 0 1 .67-.223L8 9.44l5.776-2.888a.5.5 0 1 1 .448.894l-6 3a.5.5 0 0 1-.448 0l-6-3a.5.5 0 0 1-.223-.67"/>
+              </svg>
+        </div> -->
+        <!-- <div id="filter-list" class="filter-list hidden-filter-list">
+            <ul>
+                <li>Tickets Type</li>
+                <li>Price</li>
+            </ul>
+        </div> -->
+    </div>
+    <div style="padding-bottom: 25vh; padding-bottom: 25vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: unset;" class="tickets-results">
+        <div onload="paginationBtns()" id="results" class="results">
+            {% block ticketResults %}
+
+            {% endblock %}
+        </div>
+        <div style="    position: absolute;
+        display: block;
+        width: 100%;
+        margin-top: 72vh;
+        margin-left: 26vw;
+        height: fit-content;" id="paginationBtns">
+                <button onclick="prevPage()" class="pageBtn page_0" id="prevBtn" ><i class="fa-solid fa-chevron-left fa-lg"></i> Previous</button>
+                <input type="hidden" value="1" id="currentPg" />
+                <button onclick="nextPage()" class="pageBtn page_2" id="nextBtn">Next <i class="fa-solid fa-angle-right fa-lg"></i></button>
+              </div>
+    </div>
+</div>
+
+<script>
+    // const filter = document.getElementById('filter');
+    // const filterList = document.getElementById('filter-list');
+    // const buffer = document.getElementById('buffer');
+    // filter.addEventListener('click', function() {
+    //     if (filterList.classList.contains('hidden-filter-list')) {
+    //         filterList.classList.remove('hidden-filter-list')
+    //         buffer.classList.remove('buffer-hide');
+    //     } else {
+    //         filterList.classList.add('hidden-filter-list')
+    //         buffer.classList.add('buffer-hide');
+    //     }
+    // })
+
+    // buffer.addEventListener('click', function() {
+    //     if (!buffer.classList.contains('buffer-hide') && !filterList.classList.contains('hidden-filter-list')) {
+    //         buffer.classList.add('buffer-hide');
+    //         filterList.classList.add('hidden-filter-list');
+    //     }
+    // })
+
+    const body = document.getElementById("mainBody");
+    body.style.overflowY = "hidden";
+
+    const collapse = document.getElementById('collapse-leftsidebar');
+    const leftSidebar = document.getElementById('left-sidebar');
+    const contentList = document.getElementById('content-list')
+    const leftSidebarP = contentList.getElementsByTagName('p')
+    const mySpace = document.getElementById('mySpace');
+
+    collapse.addEventListener('click', function() {
+        if (leftSidebar.classList.contains("left-sidebar-collapse")) {
+            leftSidebar.classList.remove('left-sidebar-collapse');
+            leftSidebar.classList.add('left-sidebar');
+            document.cookie="leftsidebarCollapse=false";
+            mySpace.style.display = "block";
+            for (let i =0; i < leftSidebarP.length; i++) {
+                leftSidebarP[i].style.display = "block";
+            }
+            collapse.classList.remove('rotate-collapse'); 
+        } else if (leftSidebar.classList.contains("left-sidebar")) {
+            leftSidebar.classList.add('left-sidebar-collapse');
+            leftSidebar.classList.remove('left-sidebar');
+            document.cookie="leftsidebarCollapse=true";
+            console.log(leftSidebarP[0])
+            mySpace.style.display = "none";
+            for (let i =0; i < leftSidebarP.length; i++) {
+                leftSidebarP[i].style.transition = "all 1s";
+                leftSidebarP[i].style.display = "none";
+            }
+            collapse.classList.add('rotate-collapse'); 
+        }
+    })
+
+    const leftSidbarStatus = document.getElementById("leftSidbarStatus");
+    const collapseleftsidebar = document.getElementById('collapse-leftsidebar');
+    const myId = document.getElementById("myId").value;
+    
+    collapseleftsidebar.addEventListener('click', () => updateSidebarStatus(myId))
+
+    function updateSidebarStatus() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            console.log("worked");
+        }
+        };
+        var id = myId
+        xhttp.open('GET', `updateSidebarStatus?data=` + id, true);
+        xhttp.send();
+    
+    }
+
+    const sidebarStatus = document.getElementById('leftSidbarStatus');
+
+    if (sidebarStatus.value == 1) {
+        leftSidebar.classList.remove('left-sidebar-collapse');
+        leftSidebar.classList.add('left-sidebar');
+        mySpace.style.display = "block";
+        for (let i =0; i < leftSidebarP.length; i++) {
+            leftSidebarP[i].style.display = "block";
+        }
+        collapse.classList.remove('rotate-collapse'); 
+    } else if (sidebarStatus.value == 0) {
+        leftSidebar.style.transitionDuration = "0ms;"
+        leftSidebar.classList.add('left-sidebar-collapse');
+        leftSidebar.classList.remove('left-sidebar');
+        console.log(leftSidebarP[0])
+        mySpace.style.display = "none";
+        for (let i =0; i < leftSidebarP.length; i++) {
+            leftSidebarP[i].style.transition = "all 1s";
+            leftSidebarP[i].style.display = "none";
+        }
+        collapse.classList.add('rotate-collapse'); 
+        }
+
+    const profileBuffer = document.getElementById('profile-buffer');
+
+    const profContainer = document.getElementById('profile-container');
+    const profOptions = document.getElementById('profile-options');
+    profContainer.addEventListener('click', function() {
+        if (profOptions.classList.contains("profile-options-hide") && profileBuffer.classList.contains('profile-buffer-hide')) {
+            profOptions.classList.remove('profile-options-hide');
+            profOptions.classList.add('profile-options-show');
+            profileBuffer.classList.remove('profile-buffer-hide');
+        } else if (profOptions.classList.contains("profile-options-show")) {
+            profOptions.classList.add('profile-options-hide');
+            profOptions.classList.remove('profile-options-show');
+            profileBuffer.classList.add('profile-buffer-hide');
+        }
+    })
+
+    profileBuffer.addEventListener('click', function() {
+        if(!profileBuffer.classList.contains('profile-buffer-hide')) {
+            profileBuffer.classList.add('profile-buffer-hide');
+            profOptions.classList.add('profile-options-hide');
+            profOptions.classList.remove('profile-options-show');
+        }
+    })
+
+
+    $("#form_id").on("submit", function (e) {
+        e.preventDefault();
+        var self = $(this);
+        var originGiven = $("#inputOrigin").val();
+        console.log(originGiven)
+        $("#inputOrigin").val(originGiven.slice(0,3));
+        var destinationGiven = $("#inputDestination").val();
+        $("#inputDestination").val(destinationGiven.slice(0,3));
+        $("#form_id").off("submit");
+        self.submit();
+    });
+
+    // const toLocationData = document.getElementById("toLocationData");
+
+    // function handleToLocation() {
+    //     let locationEl = "";
+    //     const toInput = document.getElementById("to").value;
+    //     if (toInput.length > 1) {
+    //         fetch(`/api/v1/flight/select_destination/${toInput}`)
+    //         .then((response) => response.json())
+    //         .then((data) => (toLocationArray = data.data));
+    //         if (toLocationArray) {
+    //         toLocationData.style.display = "block";
+    //         toLocationArray.map((location) => {
+    //             locationEl += '<div class="card mb-3 mt-3" onclick="getToLocation(\\\\ + location.iataCode + \\\\)">\\\\ <div class="card-header"><b>Name:</b> ' + location.name + ' </div>\\\\ <div class="card-body">\\\\ City Name: ' + location.address.cityName + "\\\\ <br />\\\\ Country Name: " + location.address.countryName + '\\\\ </div>\\\\ <div class="card-footer">\\\\          <b>SubType:</b> ' + location.subType + " \\\\ </div>\\\\ </div>";
+    //     });
+    //     }
+    //     }
+    //     toLocationData.innerHTML = locationEl;
+    // }
+
+    // function getToLocation(regionCode) {
+    // destinationCode = regionCode;
+    // toLocationData.style.display = "none";
+    // }
+    // const originList = document.getElementById('ui-id-1');
+    // originList.style.listStyle = "none";
+
+    // const searchBtn = document.getElementById('searchBtn');
+    // const loadingBuffer = document.getElementById('loadingBuffer');
+    // function showLoadingBuffer() {
+    //     loadingBuffer.style.display = "block";
+    // }
+
+    // const settingsDiv = document.createElement("div");
+    // settingsDiv.classList.add("settingsMainContainer-hide");
+    // settingsDiv.id = "newSett";
+    // const mySettingDiv = document.getElementById("mainDiv").appendChild(settingsDiv);
+    // console.log(mySettingDiv);
+    // const myNewSettingDiv = document.getElementById("newSett");
+    // const settHeaderDiv = document.createElement("div");
+    // settHeaderDiv.classList.add("settings-header");
+    // const settContentDiv = document.createElement("div");
+    // settContentDiv.classList.add("settingsContent");
+
+    // myNewSettingDiv.appendChild(settHeaderDiv);
+    // myNewSettingDiv.appendChild(settContentDiv);
+    // const sett1 = document.getElementById("sett1");
+    // const sett2 = document.getElementById("sett2");
+    // sett1.addEventListener("click", function() {
+    //     if (myNewSettingDiv.classList.contains("settingsMainContainer-show")) {
+    //             myNewSettingDiv.classList.remove("settingsMainContainer-show");
+    //         } else {
+    //             myNewSettingDiv.classList.add("settingsMainContainer-show");
+    //         }
+    // });
+    // sett2.addEventListener("click", function() {
+    //     if (myNewSettingDiv.classList.contains("settingsMainContainer-show")) {
+    //             myNewSettingDiv.classList.remove("settingsMainContainer-show");
+    //         } else {
+    //             myNewSettingDiv.classList.add("settingsMainContainer-show");
+    //         }
+    // });
+
+    const settingsContainer = document.getElementById('settingsMainContainer');
+        function openSettings() {
+            if (settingsContainer.classList.contains("settingsMainContainer-show")) {
+                settingsContainer.classList.remove("settingsMainContainer-show");
+            } else {
+                settingsContainer.classList.add("settingsMainContainer-show");
+            }
+        }
+    // const myId = document.getElementById("myId").value;
+
+    const displayStatus = document.getElementById("displayStatus").value
+    const mainSection = document.getElementById("main-section")
+    const moon = document.getElementById("moon");
+    const header = document.getElementById("header");
+    var headerText = document.getElementById("app-title");
+    var greetingText = document.getElementById("greeting");
+    var results = document.getElementById("results");
+
+    if (results.childElementCount == 0) {
+        document.getElementById("paginationBtns").style.display = "none";
+    }
+
+    moon.addEventListener('click', () => changeDisplay(myId))
+
+        function darkMode() {
+            if (mainSection.classList.contains("main-section-dark") && header.classList.contains("header-dark")) {
+                mainSection.classList.remove("main-section-dark");
+                header.classList.remove("header-dark")
+                headerText.style.color = "black";
+                greetingText.style.color = "black";
+                mainSection.style.color = "black"
+                results.style.color = "black";
+                // myRecentsHeader.style.color = "black";
+                // myRecentsHeaderHome.style.color = "black";
+            } else {
+                mainSection.classList.add("main-section-dark")
+                header.classList.add("header-dark")
+                headerText.style.color = "white";
+                greetingText.style.color = "white";
+                mainSection.style.color = "white";
+                results.style.color = "white";
+                // myRecentsHeader.style.color = "white";
+                // myRecentsHeaderHome.style.color = "white";
+            }
+
+        }
+
+        function changeDisplay(id) {
+            // var xhttp = new XMLHttpRequest();
+            // xhttp.onreadystatechange = function() {
+            // if (this.readyState == 4 && this.status == 200) {
+            //     console.log("worked");
+            // }
+            // };
+            // var id = myId
+            // xhttp.open('GET', `updateDisplay?data=`, id, true);
+            // xhttp.send(); 
+            $.ajax({
+                url: "{% url 'updateDisplay' %}",
+                method: "GET",
+                async: false,
+                data: {
+                    id: id
+                },
+                datatype: "json",
+                success: function(response) {
+                    result = response
+                }
+            });           
+        }
+
+        if (displayStatus == 1) {
+            mainSection.classList.add("main-section-dark")
+            header.classList.add("header-dark")
+            headerText.style.color = "white";
+            greetingText.style.color = "white";
+            results.style.color = "white";
+        } else {
+            mainSection.classList.remove("main-section-dark")
+            header.classList.remove("header-dark")
+            headerText.style.color = "black";
+            greetingText.style.color = "black";
+            results.style.color = "black";
+        }
+
+        function closeSett() {
+            if (settingsContainer.classList.contains("settingsMainContainer-show")) {
+                settingsContainer.classList.remove("settingsMainContainer-show");
+            } else {
+                settingsContainer.classList.add("settingsMainContainer-show");
+            }
+        }
+
+        const mySavedSearch = document.getElementById('searchMySavedTickets');
+        $(function() {
+            mySavedSearch.style.display = "none";
+        })
+        
+        var result= '';
+        function searchSaved(data, id) {
+            const mySavedSearch = document.getElementById('searchMySavedTickets');
+            const searchbarRecent = document.getElementById('searchbarRecent');
+            if (data == "") {
+                mySavedSearch.style.display = "none";
+            } else if (data != "") {
+                mySavedSearch.style.display = "flex";
+                $.ajax({
+                url: "{% url 'myRecents' %}",
+                method: "GET",
+                async: false,
+                data: {
+                    searchKey: data,
+                    id: id
+                },
+                datatype: "json",
+                success: function(response) {
+                    result = response
+                    mySavedSearch.innerHTML = result
+                }
+            });
+            }
+        }
+
+        const loadingBuffer = document.getElementById('loadingBuffer');
+    
+        function searchRecentPost(id, uid) {
+            // $.ajax({
+            //         url: "{% url 'searchRecent' %}",
+            //         method: "POST",
+            //         data:
+            //         {
+            //             id: id,
+            //             uid: uid
+            //         },
+            //         datatype: "json"
+            //     });
+                loadingBuffer.style.display = "block";
+            }
+
+            // function paginationBtns() {
+            //     const myResults = document.getElementById("results");
+            //     console.log(myResults)
+            // }
+
+            function pagination() {
+
+                document.getElementById("paginationBtns").style.display = "block";
+
+                const prevBtn = document.getElementById("prevBtn");
+                const nextBtn = document.getElementById("nextBtn");
+                // prevBtn.classList.add("paginationBtns");
+                // nextBtn.classList.add("paginationBtns");
+
+                document.querySelector('input[type=text]').style.setProperty("--c", "blue");
+
+                const myResults = document.getElementById("results").children[4].children[1].children[0]
+                console.log(myResults)
+                const numberResults = document.getElementById('results').children[4].children[1].children[0].childElementCount;
+                console.log(numberResults)
+                var totalPages = Math.floor(numberResults / 21);
+                console.log(totalPages)
+                var remainderPages = Math.ceil(numberResults % 21);
+                console.log(remainderPages)
+
+                if (remainderPages > 0) {
+                    totalPages += 1;
+                }
+
+                console.log(totalPages)
+
+                if (numberResults > 21) {
+                    const currentPage = "page_1";
+                    var listOfPages = {};
+                    var page = 1;
+                    for (page; page<=totalPages; page++) {
+                        var pageSet = [];
+                        for (i=((21*page)-21); i<21*page; i++) {
+                            // console.log(myResults.children[i])
+                            // myResults.children[i].classList.add("page_"+page);
+                            // pageSet.push(myResults.children[i])
+                            // console.log(listOfPages)
+                            pageSet.push(myResults.children[i])
+                            listOfPages["page_"+page] = { pageSet }
+                        }
+                        // listOfPages["page_"+page] = { pageSet }
+                    }
+
+                    console.log(listOfPages)
+                    // const visiblePage = listOfPages[currentPage]
+                    // console.log(visiblePage)
+
+                    for (const [key, value] of Object.entries(listOfPages)) {
+                        console.log(key + " " + value.pageSet)
+                        if (key != currentPage) {
+                            for (i=0; i<value.pageSet.length; i++) {
+                                console.log(value.pageSet[i])
+                                value.pageSet[i].style.display = "none";
+                            }
+                        }
+                    }
+                }
+
+               
+
+                // const visiblePage = document.getElementsByClassName("page_1");
+                // console.log(visiblePage)
+
+            
+        }
+
+        var currentPage = document.getElementById("currentPg").value;
+        var nextBtn = document.getElementById("nextBtn").classList;
+        var prevBtn = document.getElementById("prevBtn").classList;
+
+        function nextPage() {
+                    // console.log(prevBtn);
+                    // console.log(nextBtn);
+                    // console.log(currentPage);
+
+                    const myResults = document.getElementById("results").children[4].children[1].children[0]
+                    console.log(myResults)
+                    const numberResults = document.getElementById('results').children[4].children[1].children[0].childElementCount;
+                    console.log(numberResults)
+                    var totalPages = Math.floor(numberResults / 21);
+                    console.log(totalPages)
+                    var remainderPages = Math.ceil(numberResults % 21);
+                    console.log(remainderPages)
+
+                    if (remainderPages > 0) {
+                        totalPages += 1;
+                    }
+                    // console.log(currentPage)
+                    // currentPage = Number(currentPage) + 1
+                    // document.getElementById("currentPg").value = currentPage
+
+                    if (Number(currentPage) == totalPages) {
+                        document.getElementById("currentPg").value = totalPages   
+                    } else {
+                        currentPage = Number(currentPage) + 1
+                        document.getElementById("currentPg").value = currentPage
+                    }
+
+
+                    const pageCheck = "page_" + document.getElementById("currentPg").value;
+                    var listOfPages = {};
+                    var page = 1;
+                    // console.log("this is my cur page: " + pageCheck)
+                    
+                    for (page; page<=totalPages; page++) {
+                        var pageSet = [];
+                        for (i=((21*page)-21); i<21*page; i++) {
+                            // console.log(myResults.children[i])
+                            // myResults.children[i].classList.add("page_"+page);
+                            // pageSet.push(myResults.children[i])
+                            // console.log(listOfPages)
+                            pageSet.push(myResults.children[i])
+                            listOfPages["page_"+page] = { pageSet }
+                        }
+                        // listOfPages["page_"+page] = { pageSet }
+                    }
+
+                    // console.log(listOfPages)
+                    // const visiblePage = listOfPages[currentPage]
+                    // console.log(visiblePage)
+
+                    for (const [key, value] of Object.entries(listOfPages)) {
+                        console.log(key + " " + value.pageSet + " " + pageCheck)
+                        if (key != pageCheck) {
+                            for (i=0; i<value.pageSet.length; i++) {
+                                // console.log(value.pageSet[i])
+                                value.pageSet[i].style.display = "none";
+                            }
+                        } else if (key == pageCheck) {
+                            for (i=0; i<value.pageSet.length; i++) {
+                                value.pageSet[i].style.display = "flex";
+                            }
+                        }
+                    }
+
+
+            }
+
+            function prevPage() {
+                    // console.log(prevBtn);
+                    // console.log(nextBtn);
+                    // console.log(currentPage);
+
+                    const myResults = document.getElementById("results").children[4].children[1].children[0]
+                    // console.log(myResults)
+                    const numberResults = document.getElementById('results').children[4].children[1].children[0].childElementCount;
+                    console.log(numberResults)
+                    var totalPages = Math.floor(numberResults / 21);
+                    // console.log(totalPages)
+                    var remainderPages = Math.ceil(numberResults % 21);
+                    // console.log(remainderPages)
+
+                    if (remainderPages > 0) {
+                        totalPages += 1;
+                    }
+                    // console.log(currentPage);
+
+                    if (Number(currentPage) == 1) {
+                        document.getElementById("currentPg").value = 1
+                    } else {
+                        currentPage = Number(currentPage) - 1
+                        document.getElementById("currentPg").value = currentPage
+                    }
+
+                    const pageCheck = "page_" + document.getElementById("currentPg").value;
+                    var listOfPages = {};
+                    var page = 1;
+                    // console.log(pageCheck)
+                    for (page; page<=totalPages; page++) {
+                        var pageSet = [];
+                        for (i=((21*page)-21); i<21*page; i++) {
+                            // console.log(myResults.children[i])
+                            // myResults.children[i].classList.add("page_"+page);
+                            // pageSet.push(myResults.children[i])
+                            // console.log(listOfPages)
+                            pageSet.push(myResults.children[i])
+                            listOfPages["page_"+page] = { pageSet }
+                        }
+                        // listOfPages["page_"+page] = { pageSet }
+                    }
+
+                    // console.log(listOfPages)
+                    // const visiblePage = listOfPages[currentPage]
+                    // console.log(visiblePage)
+
+                    for (const [key, value] of Object.entries(listOfPages)) {
+                        // console.log(key + " " + value.pageSet + " " + pageCheck)
+                        if (key != pageCheck) {
+                            for (i=0; i<value.pageSet.length; i++) {
+                                // console.log(value.pageSet[i])
+                                value.pageSet[i].style.display = "none";
+                            }
+                        } else if (key == pageCheck) {
+                            for (i=0; i<value.pageSet.length; i++) {
+                                value.pageSet[i].style.display = "flex";
+                            }
+                        }
+                    }
+
+
+                }
+            
+
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        $("#inputOrigin").autocomplete({
+            source: "{% url 'origin_airport_search'%}",
+            minLength: 1,
+            delay: 200,
+        });
+    });
+</script>
+<script>
+$(document).ready(function () {
+    $("#inputDestination").autocomplete({
+        source: "{% url 'destination_airport_search'%}",
+        minLength: 1,
+        delay: 200,
+    });
+});
+</script>
+{% endblock %}

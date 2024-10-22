@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    </head>
+    <header style="align-items: center;">
+        <a style="display: flex; flex-direction: row; text-decoration: none; align-items: center;" href="{% url 'index' %}" style="display: block; cursor: pointer;">
+            <div class="logo-container">
+                <svg class="logo" width="149" height="119" viewBox="0 0 149 119" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M70 57.5L10.75 104.698L10.75 10.3016L70 57.5Z" fill="#DD9F9F"/>
+                <path d="M11 9L148.339 67.4259L101.503 80.9344L11 9Z" fill="#CB4C45"/>
+                <path d="M11.5 106L71 58.5L100 81.5L11.5 106Z" fill="#EB7A7A"/>
+                </svg>
+            </div>
+            <div id="app-title" class="whiteTitle">
+                <p>TicketZen</p>
+            </div>
+        </a>
+        <!-- <nav>
+            <ul>
+                <li><a>Home</a></li>
+                <li><a>Tickets</a></li>
+                <li><a>Favorites</a></li>
+            </ul>
+        </nav> -->
+        <div class="login-register">
+            <div onmouseover="register()" onmouseout="registerClear()" id="register" class="register">
+                <a style="text-decoration: none; color: white;" href="{% url 'register' %}"><p>Register</p></a>
+            </div>
+            <div id="login" class="login login-register-active">
+                <a style="text-decoration: none; color: white;" href="{% url 'login' %}"><p>Login</p></a>
+            </div>
+        </div>
+    </header>
+
+    <section class="container-1">
+        <div class="content-1">
+            <h1>Find Your <br>Golden Ticket</h1>
+        </div>
+        <div class="img-content-1">
+            <img src="{% static 'landingImage.png' %}"/>
+        </div>
+    </section>
+
+    <section class="container-2">
+        <div class="content-2">
+            <div class="side-image">
+            </div>
+            <div class="cards hidden2">
+                <p>With TicketZen You Will Find the Best Deals with Ease. Find Your Next adventure the right way!</p>
+                <!-- <div class="card-1">
+                    <div class="card-1-title">
+                        Airline tickets
+                    </div>
+                    <div class="card-1-content">
+                        <img style="width: 225px;" src="{% static 'planeCard.png' %}"/>
+                    </div>
+                </div> -->
+                <!-- <div class="card-2">
+                    <div class="card-2-content">
+                        <img style="width: 200px;" src="{% static 'cruiseCard.png' %}"/>
+                    </div>
+                    <div class="card-2-title">
+                        Cruise line tickets
+                    </div>
+                </div>
+                <div class="card-3">
+                    <div class="card-3-content">
+                        <img style="width: 220px;" src="{% static 'shortDistanceCard.png' %}"/>
+                    </div>
+                    <div class="card-3-title">
+                        Short Distance
+                    </div>
+                </div>
+                <div class="card-4">
+                    <div class="card-4-content">
+                        <img style="width: 230px;" src="{% static 'trainCard.png' %}"/>
+                    </div>
+                    <div style="font-family: 'Raleway', sans-serif;
+                    font-optical-sizing: auto;
+                    font-weight: 700;
+                    font-style: normal;
+                    font-size: large;
+                    color: black;" class="card-4-title">
+                        Train tickets
+                    </div>
+                </div> -->
+            </div>
+        </div>
+    </section>
+
+    <section class="container-3">
+        <div class="content-3">
+            <div class="content-3-left hidden">
+                <p>
+                    We are dedicated to making traveling easier. Find what<br> adventures await you by finding tickets the right way.
+                </p>
+            </div>
+            <div class="content-3-right">
+                <div class="blob">
+                    <img src="{% static 'zenPerson.png' %}"/>
+                </div>
+                <div class="blob-shadow">
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if(entry.isIntersecting) {
+                    entry.target.classList.add('show');
+                } else {
+                    entry.target.classList.remove('show');
+                }
+            });
+        })
+        
+        const hiddenElements = document.querySelectorAll('.hidden');    
+        
+        hiddenElements.forEach((el) => observer.observe(el));
+
+
+        const observer2 = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if(entry.isIntersecting) {
+                    entry.target.classList.add('show2');
+                } else {
+                    entry.target.classList.remove('show2');
+                }
+            });
+        })
+        
+        const hiddenElements2 = document.querySelectorAll('.hidden2');    
+        
+        hiddenElements2.forEach((el) => observer2.observe(el));
+
+
+    </script>
+
+
+
+{% endblock %}
