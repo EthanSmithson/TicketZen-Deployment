@@ -213,7 +213,7 @@ def login(request):
 
         try:
             data2 = amadeus.shopping.flight_destinations.get(
-                        origin="MAD"
+                        origin=closestAirportCode
                     ).data
             
             # print(data2)
@@ -391,7 +391,7 @@ def home(request):
 
     try:
         data2 = amadeus.shopping.flight_destinations.get(
-                    origin="MAD"
+                    origin=closestAirportCode
                 ).data
         
         print(data2)
