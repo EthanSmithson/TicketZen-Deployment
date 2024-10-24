@@ -878,13 +878,14 @@ nav li a:hover {
 
 .content-3-left {
     font-size: x-large;
-    font-family: "Rubik", sans-serif;
+    font-family: "Work Sans", sans-serif;
     font-optical-sizing: auto;
     font-weight: 750;
     font-style: normal;
     background: linear-gradient(to right, #f32170, #ff6b08, #cf23cf, #ff87be);
     -webkit-text-fill-color: transparent;
     -webkit-background-clip: text;
+    text-shadow: 8px 8px 11px #d4d2d2;
 }
 
 .content-3-right {
@@ -1066,11 +1067,12 @@ nav li a:hover {
 
 .cards p {
     font-size: x-large;
-    font-family: "Rubik", sans-serif;
+    font-family: "Work Sans", sans-serif;
     font-optical-sizing: auto;
     font-weight: 750;
     font-style: normal;
     text-align: center;
+    text-shadow: 8px 8px 11px #d4d2d2;
 }
 
 .inspirationError {
