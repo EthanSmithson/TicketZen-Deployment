@@ -98,7 +98,7 @@ WSGI_APPLICATION = 'djangoWebApp.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-if DEVELOPMENT_MODE is True:
+if DEVELOPMENT_MODE is False:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
