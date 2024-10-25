@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='savedticket',
             name='zeroSecondFlightDepartureDate',
-            field=models.CharField(default='', max_length=1000000000),
+            field=models.CharField(default='', max_length=1000000),
         ),
     ]

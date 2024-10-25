@@ -18,51 +18,51 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='savedticket',
             name='oneFirstFlightArrivalDate',
-            field=models.CharField(default='', max_length=1000000000),
+            field=models.CharField(default='', max_length=1000000),
         ),
         migrations.AddField(
             model_name='savedticket',
             name='oneFirstFlightDepartureAirport',
-            field=models.CharField(default='', max_length=1000000000),
+            field=models.CharField(default='', max_length=1000000),
         ),
         migrations.AddField(
             model_name='savedticket',
             name='oneFirstFlightDepartureDate',
-            field=models.CharField(default='', max_length=1000000000),
+            field=models.CharField(default='', max_length=1000000),
         ),
         migrations.AddField(
             model_name='savedticket',
             name='oneFlightTotalDuration',
-            field=models.CharField(default='', max_length=1000000000),
+            field=models.CharField(default='', max_length=1000000),
         ),
         migrations.AddField(
             model_name='savedticket',
             name='price',
-            field=models.CharField(default='', max_length=1000000000),
+            field=models.CharField(default='', max_length=1000000),
         ),
         migrations.AddField(
             model_name='savedticket',
             name='zeroFirstFlightArrivalAirport',
-            field=models.CharField(default='', max_length=1000000000),
+            field=models.CharField(default='', max_length=1000000),
         ),
         migrations.AddField(
             model_name='savedticket',
             name='zeroFirstFlightArrivalDate',
-            field=models.CharField(default='', max_length=1000000000),
+            field=models.CharField(default='', max_length=1000000),
         ),
         migrations.AddField(
             model_name='savedticket',
             name='zeroFirstFlightDepartureAirport',
-            field=models.CharField(default='', max_length=1000000000),
+            field=models.CharField(default='', max_length=1000000),
         ),
         migrations.AddField(
             model_name='savedticket',
             name='zeroFirstFlightDepartureDate',
-            field=models.CharField(default='', max_length=1000000000),
+            field=models.CharField(default='', max_length=1000000),
         ),
         migrations.AddField(
             model_name='savedticket',
             name='zeroFlightTotalDuration',
-            field=models.CharField(default='', max_length=1000000000),
+            field=models.CharField(default='', max_length=1000000),
         ),
     ]
